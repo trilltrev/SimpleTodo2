@@ -1,6 +1,7 @@
 package com.example.simpletodo2;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,9 +19,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static java.nio.charset.Charset.defaultCharset;
-import static org.apache.commons.io.FileUtils.readLines;
 import static org.apache.commons.io.FileUtils.writeLines;
 
 public class MainActivity extends AppCompatActivity {
@@ -102,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 String todoItem = etItem.getText().toString();
                 //Add item to model
                 getItems().add(todoItem);
+
                 //Notify adapter that an item is inserted
                 itemsAdapter.notifyItemInserted(getItems().size() - 1);
                 etItem.setText("");
@@ -112,16 +115,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
      //handle result of edit activity
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
             //retrieve the updated text value
 
-            String itemText = data.getStringExtra(KEY_ITEM_TEXT);
+        assert data != null;
+        String itemText = data.getStringExtra(KEY_ITEM_TEXT);
 
             // extract the original position of the edited item from the position key
-            int position = data.getExtras().getInt(KEY_ITEM_POSITION);
+            int position = Objects.requireNonNull(data.getExtras()).getInt(KEY_ITEM_POSITION);
 
             //update the model at the right position with new item text
             getItems().set(position, itemText);
@@ -131,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
 
             //persist the changes
             saveItems();
-        final Toast toast;
         Toast.makeText(getApplicationContext(), "Item updated successfully!", Toast.LENGTH_SHORT).show();
     }
 
