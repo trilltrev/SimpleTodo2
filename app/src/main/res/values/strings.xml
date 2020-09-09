@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SimpleTodo2</string>
+    <string name="save">Save</string>
+    <string name="updat_the_item">Updat the item</string>
+</resources>
